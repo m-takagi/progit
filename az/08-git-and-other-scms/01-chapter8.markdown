@@ -362,8 +362,7 @@ However, the import isn’t perfect; and because it will take so long, you may a
 
 To get a list of the author names that SVN uses, you can run this:
 
-	$ svn log --xml | grep -P "^<author" | sort -u | \
-	      perl -pe 's/<author>(.*?)<\/author>/$1 = /'
+	$ svn log --xml | grep author | sort -u | perl -pe 's/.>(.?)<./$1 = /'
 
 That gives you the log output in XML format — you can look for the authors, create a unique list, and then strip out the XML. (Obviously this only works on a machine with `grep`, `sort`, and `perl` installed.) Then, redirect that output into your users.txt file so you can add the equivalent Git user data next to each entry.
 
@@ -396,13 +395,15 @@ You need to do a bit of `post-import` cleanup. For one thing, you should clean u
 
 To move the tags to be proper Git tags, run
 
-	$ git for-each-ref refs/remotes/tags | cut -d / -f 4- | grep -v @ | while read tagname; do git tag "$tagname" "tags/$tagname"; git branch -r -d "tags/$tagname"; done
+	$ cp -Rf .git/refs/remotes/tags/* .git/refs/tags/
+	$ rm -Rf .git/refs/remotes/tags
 
 This takes the references that were remote branches that started with `tag/` and makes them real (lightweight) tags.
 
 Next, move the rest of the references under `refs/remotes` to be local branches:
 
-	$ git for-each-ref refs/remotes | cut -d / -f 3- | grep -v @ | while read branchname; do git branch "$branchname" "refs/remotes/$branchname"; git branch -r -d "$branchname"; done
+	$ cp -Rf .git/refs/remotes/* .git/refs/heads/
+	$ rm -Rf .git/refs/remotes
 
 Now all the old branches are real Git branches and all the old tags are real Git tags. The last thing to do is add your new Git server as a remote and push to it. Here is an example of adding your server as a remote:
 
@@ -411,7 +412,6 @@ Now all the old branches are real Git branches and all the old tags are real Git
 Because you want all your branches and tags to go up, you can now run this:
 
 	$ git push origin --all
-	$ git push origin --tags
 
 All your branches and tags should be on your new Git server in a nice, clean import.
 
