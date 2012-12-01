@@ -101,13 +101,7 @@ def post_pandoc(string, config)
 		s /\sx\s10\\\^\{\}(\d+)/, '\e{\1}'
 
 		# Convert inline-verbatims into \texttt (which is able to wrap)
-		s /\\verb(\W)(.*?)\1/ do
-			"{\\texttt{#{verbatim_sanitize($2)}}}"
-		end
-
-		# Ensure monospaced stuff is in a smaller font
-		s /(\\verb(\W).*?\2)/, '{\footnotesize\1}'
-		s /(\\begin\{verbatim\}.*?\\end\{verbatim\})/m, '{\footnotesize\1}'
+		s /\\verb(\W)(.*?)\1/ ,'\\texttt{\2}'
 
 		# Make Tables 2-1..2-3 actual tables
 		s /\\begin\{verbatim\}\n(([^\t\n]+\t.*?\n)+)(([^\t\n]*)\n)?\\end\{verbatim\}/ do
@@ -181,7 +175,7 @@ figures do
 			print "\t\tPass #{i + 1}... "
 			IO.popen("xelatex -output-directory=\"#{dir}\" \"#{dir}/main.tex\" 2>&1") do |pipe|
 				unless $DEBUG
-					if ~ /^!\s/
+					if $_[0..1]=='! '
 						puts "failed with:\n\t\t\t#{$_.strip}"
 						puts "\tConsider running this again with --debug."
 						abort = true
