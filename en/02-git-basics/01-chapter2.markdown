@@ -577,6 +577,7 @@ Those are only some simple output-formatting options to `git log` — there are 
 	--relative-date	Display the date in a relative format (for example, “2 weeks ago”) instead of using the full date format.
 	--graph	Display an ASCII graph of the branch and merge history beside the log output.
 	--pretty	Show commits in an alternate format. Options include oneline, short, full, fuller, and format (where you specify your own format).
+	--oneline	A convenience option short for `--pretty=oneline --abbrev-commit`.
 
 ### Limiting Log Output ###
 
@@ -754,7 +755,7 @@ I’ve mentioned and given some demonstrations of adding remote repositories in 
 	origin	git://github.com/schacon/ticgit.git
 	pb	git://github.com/paulboone/ticgit.git
 
-Now you can use the string `pb` on the command line in lieu of the whole URL. For example, if you want to fetch all the information that Paul has but that you don’t yet have in your repository, you can run git fetch pb:
+Now you can use the string `pb` on the command line in lieu of the whole URL. For example, if you want to fetch all the information that Paul has but that you don’t yet have in your repository, you can run `git fetch pb`:
 
 	$ git fetch pb
 	remote: Counting objects: 58, done.
