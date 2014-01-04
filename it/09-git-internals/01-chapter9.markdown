@@ -9,7 +9,7 @@ Nelle prime versioni di Git (principalmente pre 1.5) l'interfaccia utente era mo
 
 Il filesystem indirizzabile per contenuto è veramente formidabile, quindi in questo capitolo inizierò parlandone. Imparerai quindi il meccanismo di trasporto e le attività per la manutenzione del repository con le potresti dover aver a che fare.
 
-## Impianto e sanitari ##
+## Impianto e sanitari (*Plumbing* e *Porcelain*) ##
 
 Questo libro parla di come usare Git utilizzando più di 30 termini come `checkout`, `branch`, `remote` e così via. Poiché Git è stato inizialmente sviluppato come un insieme di strumenti per un VCS, piuttosto che un completo VCS user-friendly, ha un mucchio di termini per fare lavori di basso livello e progettati per essere concatenati insieme nello stile UNIX o invocati da script. Di solito ci si riferisce a questi comandi come "plumbing" (impianto), mentre i comandi più user-friendly sono detti comandi "porcelain" (sanitari).
 
@@ -213,7 +213,7 @@ Ora hai una vera e propria cronologia di Git che puoi consultare con il comando 
 	Author: Scott Chacon <schacon@gmail.com>
 	Date:   Fri May 22 18:15:24 2009 -0700
 
-	    third commit
+	    terza commit
 
 	 bak/test.txt |    1 +
 	 1 files changed, 1 insertions(+), 0 deletions(-)
@@ -222,7 +222,7 @@ Ora hai una vera e propria cronologia di Git che puoi consultare con il comando 
 	Author: Scott Chacon <schacon@gmail.com>
 	Date:   Fri May 22 18:14:29 2009 -0700
 
-	    second commit
+	    seconda commit
 
 	 new.txt  |    1 +
 	 test.txt |    2 +-
@@ -232,7 +232,7 @@ Ora hai una vera e propria cronologia di Git che puoi consultare con il comando 
 	Author: Scott Chacon <schacon@gmail.com>
 	Date:   Fri May 22 18:09:34 2009 -0700
 
-	    first commit
+	    prima commit
 
 	 test.txt |    1 +
 	 1 files changed, 1 insertions(+), 0 deletions(-)
@@ -322,9 +322,9 @@ Per creare un nuovo riferimento che ti aiuterà a ricordare dov'è la tua ultima
 Ora puoi usare il riferimento appena creato al posto del valore SHA-1 nei tuoi comandi Git:
 
 	$ git log --pretty=oneline  master
-	1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
-	cac0cab538b970a37ea1e769cbbde608743bc96d second commit
-	fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+	1a410efbd13591db07496601ebc7a059dd55cfe9 terza commit
+	cac0cab538b970a37ea1e769cbbde608743bc96d seconda commit
+	fdf4fc3344e67ab068f836878b6c4951e3b15f3d prima commit
 
 Questo però non ti incoraggia a modificare direttamente i file di riferimento. Git fornisce un comando sicuro per farlo se vuoi aggiornare un riferimento, chiamato `update-ref`:
 
@@ -337,8 +337,8 @@ Questo è quello che si definisce branch in Git: un semplice puntatore o riferim
 Il tuo branch conterrà solo il lavoro da quella commit in poi:
 
 	$ git log --pretty=oneline test
-	cac0cab538b970a37ea1e769cbbde608743bc96d second commit
-	fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+	cac0cab538b970a37ea1e769cbbde608743bc96d seconda commit
+	fdf4fc3344e67ab068f836878b6c4951e3b15f3d prima commit
 
 Ora, il tuo database Git assomiglia concettualmente alla Figura 9-4.
 
@@ -453,8 +453,8 @@ Git comprime il contenuto di questi file con zlib e, poiché non stai memorizzan
 
 	$ curl http://github.com/mojombo/grit/raw/master/lib/grit/repo.rb > repo.rb
 	$ git add repo.rb 
-	$ git commit -m 'added repo.rb'
-	[master 484a592] added repo.rb
+	$ git commit -m ‘aggiunto repo.rb'
+	[master 484a592] aggiunto repo.rb
 	 3 files changed, 459 insertions(+), 2 deletions(-)
 	 delete mode 100644 bak/test.txt
 	 create mode 100644 repo.rb
@@ -475,8 +475,8 @@ Puoi quindi usare `git cat-file` per vedere le dimensioni dell’oggetto:
 Modifica un po’ il file e guarda che succede:
 
 	$ echo '# testing' >> repo.rb 
-	$ git commit -am 'modified repo a bit'
-	[master ab1afef] modified repo a bit
+	$ git commit -am 'modificato un poco il repository'
+	[master ab1afef] modificato un poco il repository
 	 1 files changed, 1 insertions(+), 0 deletions(-)
 
 Verificando l’albero risultate da questa commit vedrai qualcosa d’interessante:
@@ -515,7 +515,7 @@ Gli oggetti rimanenti sono i blob che non puntano a nessuna commit: in questo ca
 
 I nuovi file sono il pacchetto e un indice. Il pacchetto è un singolo file contenente tutti gli altri oggetti che sono stati rimossi dal filesystem. L’indice è un file che contiene gli offset degli oggetti contenuti nel pacchetto per trovare velocemente un oggetto specifico. La cosa interessante è che, sebbene gli oggetti occupassero 12K sul disco prima dell’esecuzione di `gc`, il nuovo pacchetto è di soli 6K. Hai dimezzato lo spazio usato sul disco comprimendo gli oggetti.
 
-Come Git ci riesce? Quando Git comprime gli oggetti, cerca prima i file che hanno lo stesso nome e dimensioni simili, e memorizza solo le differenze tra i singoli file. Puoi controllare dentro il pacchetto e vedere cos’ha fatto Git per risparmiare spazio. Il comando *plumbing* `git verify-pack` ti permette di vedere cos’è stato compresso:
+Git come ci riesce? Quando Git comprime gli oggetti, cerca prima i file che hanno lo stesso nome e dimensioni simili, e memorizza solo le differenze tra i singoli file. Puoi controllare dentro il pacchetto e vedere cos’ha fatto Git per risparmiare spazio. Il comando *plumbing* `git verify-pack` ti permette di vedere cos’è stato compresso:
 
 	$ git verify-pack -v \
 	  .git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
@@ -671,34 +671,34 @@ Ora hai altri due oggetti da scaricare: `cfda3b`, che è l’albero a cui fa rif
 	=> GET objects/08/5bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
 	(179 bytes of data)
 
-That gives you your next commit object. Grab the tree object:
+Che ti restituisce il seguente oggetto commit e scarica l’albero:
 
 	=> GET objects/cf/da3bf379e4f8dba8717dee55aab78aef7f4daf
-	(404 - Not Found)
+	(404 - Non trovato)
 
-Oops — it looks like that tree object isn’t in loose format on the server, so you get a 404 response back. There are a couple of reasons for this — the object could be in an alternate repository, or it could be in a packfile in this repository. Git checks for any listed alternates first:
+Oops: sembra che l’oggetto sul server non sia in formato sciolto, e per questo hai ricevuto un errore 404. Ci sono un paio di ragioni per cui questo possa accadere: l’oggetto potrebbe essere in un altro repository o potrebbe essere in un pacchetto (*packfile*). Git cerca prima la lista dei repository alternativi:
 
 	=> GET objects/info/http-alternates
-	(empty file)
+	(file vuoto)
 
-If this comes back with a list of alternate URLs, Git checks for loose files and packfiles there — this is a nice mechanism for projects that are forks of one another to share objects on disk. However, because no alternates are listed in this case, your object must be in a packfile. To see what packfiles are available on this server, you need to get the `objects/info/packs` file, which contains a listing of them (also generated by `update-server-info`):
+E se questa restituisce una lista di URL alternativi, Git cerca sui repository elencati i file sciolti e i pacchetti: questo è un buon meccanismo per progetti che sono uno la biforcazione dell’altro per condividere gli oggetti sul disco. Poiché però nel nostro caso  non c’è nessun repository alternativo, l’oggetto che cerchiamo dev’essere in un pacchetto. Per sapere quali pacchetti sono disponibili sul server, devi scaricare il file `objects/info/packs`, che contiene la lista di tutti i pacchetti (questo file viene generato anche da `update-server-info`):
 
 	=> GET objects/info/packs
 	P pack-816a9b2334da9953e530f27bcac22082a9f5b835.pack
 
-There is only one packfile on the server, so your object is obviously in there, but you’ll check the index file to make sure. This is also useful if you have multiple packfiles on the server, so you can see which packfile contains the object you need:
+Sul nostro server c’è un solo pacchetto, quindi il nostro oggetto è ovviamente lì, ma cercheremo l’indice per esserne sicuri. Questo è utile nel caso abbia più pacchetti sul server, così puoi scoprire quale pacchetto contiene l’oggetto di cui hai bisogno:
 
 	=> GET objects/pack/pack-816a9b2334da9953e530f27bcac22082a9f5b835.idx
 	(4k of binary data)
 
-Now that you have the packfile index, you can see if your object is in it — because the index lists the SHAs of the objects contained in the packfile and the offsets to those objects. Your object is there, so go ahead and get the whole packfile:
+Ora che hai l’indice del pacchetto, puoi vedere quali oggetti contiene perché questo contiene tutti gli hash SHA degli oggetti contenuti nel pacchetto e gli offset degli oggetti. L’oggetto è lì e quindi scaricheremo l’intero pacchetto:
 
 	=> GET objects/pack/pack-816a9b2334da9953e530f27bcac22082a9f5b835.pack
 	(13k of binary data)
 
-You have your tree object, so you continue walking your commits. They’re all also within the packfile you just downloaded, so you don’t have to do any more requests to your server. Git checks out a working copy of the `master` branch that was pointed to by the HEAD reference you downloaded at the beginning.
+Hai tre oggetti albero e puoi quindi continuare a percorrere le commit. Sono tutte nello stesso pacchetto che hai appena scaricato, così non devi fare ulteriori richieste al tuo server. Git crea una copia di lavoro con un check out del branch `master` riferito dal puntatore HEAD che hai scaricato all’inizio.
 
-The entire output of this process looks like this:
+L’intero output di questo processo appare così:
 
 	$ git clone http://github.com/schacon/simplegit-progit.git
 	Initialized empty Git repository in /private/tmp/simplegit-progit/.git/
@@ -713,52 +713,52 @@ The entire output of this process looks like this:
 	walk 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
 	walk a11bef06a3f659402fe7563abf99ad00de2209e6
 
-### The Smart Protocol ###
+### Protocolli intelligenti ###
 
-The HTTP method is simple but a bit inefficient. Using smart protocols is a more common method of transferring data. These protocols have a process on the remote end that is intelligent about Git — it can read local data and figure out what the client has or needs and generate custom data for it. There are two sets of processes for transferring data: a pair for uploading data and a pair for downloading data.
+Usare l’HTTP è un metodo semplice ma inefficiente. È molto più comune usare i protocolli intelligenti per il trasferimento dei dati. Questi protocolli usano un processo sul server remoto che conosce Git intelligentemente: possono leggere i dati locali e capire quali dati sono già sul client e quali devono invece essere trasferiti e generare quindi un flusso di dati personalizzato. Ci sono due gruppi di processi per trasferire i dati: una coppia per inviarli e una per scaricarli.
 
-#### Uploading Data ####
+#### Inviare dati ####
 
-To upload data to a remote process, Git uses the `send-pack` and `receive-pack` processes. The `send-pack` process runs on the client and connects to a `receive-pack` process on the remote side.
+Per inviare dati a un server remoto, Git usa i processi `send-pack` e `receive-pack`. Il processo `send-pack` viene eseguito sul client e lo connette al processo `receive-pack` sul server remoto.
 
-For example, say you run `git push origin master` in your project, and `origin` is defined as a URL that uses the SSH protocol. Git fires up the `send-pack` process, which initiates a connection over SSH to your server. It tries to run a command on the remote server via an SSH call that looks something like this:
+Diciamo, per esempio, che esegui il comando `git push origin master` nel tuo progetto, e `origin` è un URL che usa il protocollo SSH. Git avvia il processo `send-pack` che stabilisce una connessione al server con SSH e cerca di eseguire un comando sul server attraverso SSH:
 
 	$ ssh -x git@github.com "git-receive-pack 'schacon/simplegit-progit.git'"
 	005bca82a6dff817ec66f4437202690a93763949 refs/heads/master report-status delete-refs
 	003e085bb3bcb608e1e84b2432f8ecbe6306e7e7 refs/heads/topic
 	0000
 
-The `git-receive-pack` command immediately responds with one line for each reference it currently has — in this case, just the `master` branch and its SHA. The first line also has a list of the server’s capabilities (here, `report-status` and `delete-refs`).
+Il comando `git-receive-pack` risponde immediatamente con una riga per ogni riferimento che memorizza (in questo caso solo il branch `master` e i suoi hash SHA). La prima riga indica anche quali sono le operazioni possibili sul server (nel nostro caso `report-status` e `delete-refs`).
 
-Each line starts with a 4-byte hex value specifying how long the rest of the line is. Your first line starts with 005b, which is 91 in hex, meaning that 91 bytes remain on that line. The next line starts with 003e, which is 62, so you read the remaining 62 bytes. The next line is 0000, meaning the server is done with its references listing.
+Ogni riga inizia con un valore esadecimale da 4 byte che specifica la lunghezza del resto della riga. La nostra prima riga inizia con 005b, ovvero 91 in esadecimale, che significa che su questa riga restano altri 91 bytes. La riga successiva inizia con 003e, ovvero 62, e quindi leggerai gli altri 62 bytes. La riga successiva è 0000, che significa che la lista dei riferimenti sul server è finita.
 
-Now that it knows the server’s state, your `send-pack` process determines what commits it has that the server doesn’t. For each reference that this push will update, the `send-pack` process tells the `receive-pack` process that information. For instance, if you’re updating the `master` branch and adding an `experiment` branch, the `send-pack` response may look something like this:
+Ora che conosce lo stato del server, il tuo processo `send-pack` determina quali commit hai in locale e quali no. Per ogni riferimento che verrà aggiornato con questa push, il processo `send-pack` invia le informazioni al processo `receive-pack`. Per esempio, se stai aggiornando il branch `master` e aggiungendo il branch `experiment`, la risposta del `send-pack` sarà più o meno così:
 
 	0085ca82a6dff817ec66f44342007202690a93763949  15027957951b64cf874c3557a0f3547bd83b3ff6 refs/heads/master report-status
 	00670000000000000000000000000000000000000000 cdfdb42577e2506715f8cfeacdbabc092bf63e8d refs/heads/experiment
 	0000
 
-The SHA-1 value of all '0's means that nothing was there before — because you’re adding the experiment reference. If you were deleting a reference, you would see the opposite: all '0's on the right side.
+L’hash SHA-1 di tutti '0' significa che prima non c’era niente, perché stiamo aggiungendo il riferimento al branch sperimentale. Se invece stai cancellando un riferimento, vedrai l’opposto: gli ‘0’ saranno sul lato destro.
 
-Git sends a line for each reference you’re updating with the old SHA, the new SHA, and the reference that is being updated. The first line also has the client’s capabilities. Next, the client uploads a packfile of all the objects the server doesn’t have yet. Finally, the server responds with a success (or failure) indication:
+Git invia una riga per ogni riferimento che si sta aggiornando con l’SHA precedente, il nuovo e il riferimento che si sta aggiornando. La prima riga indica anche le operazioni possibili sul client. Il client invia al server un pacchetto con tutti gli oggetti che non ci sono ancora sul server e il server conclude il trasferimento indicando che il trasferimento è andato a buon fine o è fallito):
 
 	000Aunpack ok
 
-#### Downloading Data ####
+#### Scaricare dati ####
 
-When you download data, the `fetch-pack` and `upload-pack` processes are involved. The client initiates a `fetch-pack` process that connects to an `upload-pack` process on the remote side to negotiate what data will be transferred down.
+Quando scarichi dei dati vengono invocati i processi `fetch-pack` e `upload-pack`. Il client avvia il processo `fetch-pack` che si connette al processo `upload-pack`, sul server remoto, per definire i dati che dovranno essere scaricati.
 
-There are different ways to initiate the `upload-pack` process on the remote repository. You can run via SSH in the same manner as the `receive-pack` process. You can also initiate the process via the Git daemon, which listens on a server on port 9418 by default. The `fetch-pack` process sends data that looks like this to the daemon after connecting:
+Ci sono diversi modi per avviare il processo `upload-pack` sul repository remote. Puoi eseguirlo con SSH, come abbiamo fatto per il processo `receive-pack`, ma puoi anche avviarlo con il demone Git, che si mette in ascolto sulla porta 9418. Una volta connesso, il processo `fetch-pack` invia al demone remoto una serie di dati che assomigliano a questi:
 
 	003fgit-upload-pack schacon/simplegit-progit.git\0host=myserver.com\0
 
-It starts with the 4 bytes specifying how much data is following, then the command to run followed by a null byte, and then the server’s hostname followed by a final null byte. The Git daemon checks that the command can be run and that the repository exists and has public permissions. If everything is cool, it fires up the `upload-pack` process and hands off the request to it.
+Inizia con 4 byte che indicano la quantità dei dati che seguiranno, quindi il comando da eseguire seguito da un byte *null* quindi il nome del server seguito da un altro byte *null*. Il demone Git verifica che il comando richiesto possa essere eseguito, che il repository esista e che sia accessibile pubblicamente. Se tutto va bene, avvia processo `upload-pack` e gli passa il controllo della request.
 
-If you’re doing the fetch over SSH, `fetch-pack` instead runs something like this:
+Se stai prendendo i dati con l’SSH, `fetch-pack` eseguirà qualcosa del genere:
 
 	$ ssh -x git@github.com "git-upload-pack 'schacon/simplegit-progit.git'"
 
-In either case, after `fetch-pack` connects, `upload-pack` sends back something like this:
+In entrambi i casi, dopo la connessione di `fetch-pack`, `upload-pack` restituisce qualcosa del genere:
 
 	0088ca82a6dff817ec66f44342007202690a93763949 HEAD\0multi_ack thin-pack \
 	  side-band side-band-64k ofs-delta shallow no-progress include-tag
@@ -766,32 +766,32 @@ In either case, after `fetch-pack` connects, `upload-pack` sends back something 
 	003e085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 refs/heads/topic
 	0000
 
-This is very similar to what `receive-pack` responds with, but the capabilities are different. In addition, it sends back the HEAD reference so the client knows what to check out if this is a clone.
+Questa risposta è simile a quella di `receive-pack`, ma ha delle caratteristiche diverse. Invia, in aggiunta, il riferimento all’HEAD così che se si sta facendo un clone, il client sappia di cosa debba fare il checkout.
 
-At this point, the `fetch-pack` process looks at what objects it has and responds with the objects that it needs by sending "want" and then the SHA it wants. It sends all the objects it already has with "have" and then the SHA. At the end of this list, it writes "done" to initiate the `upload-pack` process to begin sending the packfile of the data it needs:
+A questo punto il processo `fetch-pack` cerca quali oggetti ha già e risponde indicando gli oggetti di cui ha bisogno, inviando un "want" (voglio) e gli SHA che vuole. Invia anche gli hash degli oggetti che ha già, preceduti da "have" (ho). Alla fine di questa lista scrive "done" (fatto), per invitare il processo `upload-pack` a inviare il pacchetto con i dati di cui hai bisogno:
 
 	0054want ca82a6dff817ec66f44342007202690a93763949 ofs-delta
 	0032have 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
 	0000
 	0009done
 
-That is a very basic case of the transfer protocols. In more complex cases, the client supports `multi_ack` or `side-band` capabilities; but this example shows you the basic back and forth used by the smart protocol processes.
+Questo è il caso più semplice del protocollo di trasferimento. Nei casi più complessi il client supporta anche i metodi `multi_ack` o `side-band`, ma questo esempio mostra l’andirivieni dei processi del protocollo intelligente.
 
-## Maintenance and Data Recovery ##
+## Manutenzione e recupero dei dati ##
 
-Occasionally, you may have to do some cleanup — make a repository more compact, clean up an imported repository, or recover lost work. This section will cover some of these scenarios.
+A volte può essere necessario fare un po’ di pulizia del repository per renderlo più compatto, per ripulire un repository importato o recuperare del lavoro che è andato perso. Questa sezione tratta alcuni di questi scenari.
 
-### Maintenance ###
+### Manutenzione ###
 
-Occasionally, Git automatically runs a command called "auto gc". Most of the time, this command does nothing. However, if there are too many loose objects (objects not in a packfile) or too many packfiles, Git launches a full-fledged `git gc` command. The `gc` stands for garbage collect, and the command does a number of things: it gathers up all the loose objects and places them in packfiles, it consolidates packfiles into one big packfile, and it removes objects that aren’t reachable from any commit and are a few months old.
+Git, occasionalmente, esegue automaticamente il comando "auto gc". Il più delle volte questo comando non fa niente, ma se ci sono troppi oggetti sciolti (oggetti che non sono compressi in un pacchetto) o troppi pacchetti, Git esegue un vero e proprio `git gc`. `gc` sta per *garbage collect* (raccolta della spazzatura), e il comando fa una serie di cose:: raccoglie tutti gli oggetti sciolti e li compatta in un pacchetto, consolida i pacchetti in un pacchetto più grande e cancella gli oggetti che non sono raggiungibili da nessuna commit e siano più vecchi di qualche mese.
 
-You can run auto gc manually as follows:
+Puoi eseguire il comando “auto gc” così:
 
 	$ git gc --auto
 
-Again, this generally does nothing. You must have around 7,000 loose objects or more than 50 packfiles for Git to fire up a real gc command. You can modify these limits with the `gc.auto` and `gc.autopacklimit` config settings, respectively.
+Questo, lo ripetiamo, generalmente non farà niente: dovrai avere circa 7.000 oggetti sciolti o più di 50 pacchetti perché Git esegua la garbage collection vera e propria. Puoi modificare questi limiti cambiando, rispettivamente, i valori di `gc.auto` e `gc.autopacklimit` delle tue configurazioni.
 
-The other thing `gc` will do is pack up your references into a single file. Suppose your repository contains the following branches and tags:
+Un’altra cosa che fa `gc` è quella di impacchettare i tuoi riferimenti in un singolo file. Immagina che il tuo repository contenga i branch e i tag seguenti:
 
 	$ find .git/refs -type f
 	.git/refs/heads/experiment
@@ -799,7 +799,7 @@ The other thing `gc` will do is pack up your references into a single file. Supp
 	.git/refs/tags/v1.0
 	.git/refs/tags/v1.1
 
-If you run `git gc`, you’ll no longer have these files in the `refs` directory. Git will move them for the sake of efficiency into a file named `.git/packed-refs` that looks like this:
+Se esegui `git gc` non avrai più questi file nella directory `refs` perché Git li sposterà, in nome dell’efficienza, in un file chiamato `.git/packed-refs`, che apparirà così:
 
 	$ cat .git/packed-refs
 	# pack-refs with: peeled
@@ -809,41 +809,41 @@ If you run `git gc`, you’ll no longer have these files in the `refs` directory
 	9585191f37f7b0fb9444f35a9bf50de191beadc2 refs/tags/v1.1
 	^1a410efbd13591db07496601ebc7a059dd55cfe9
 
-If you update a reference, Git doesn’t edit this file but instead writes a new file to `refs/heads`. To get the appropriate SHA for a given reference, Git checks for that reference in the `refs` directory and then checks the `packed-refs` file as a fallback. However, if you can’t find a reference in the `refs` directory, it’s probably in your `packed-refs` file.
+Se aggiorni un riferimento, Git non modificherà questo file, ma scriverà un nuovo file nella directory `refs/heads`. Per conoscere l’hash SHA di uno specifico riferimento, Git controlla se è nella directory `refs` e poi nel file `packed-refs` se non lo trova. In ogni caso, se non trovi un riferimento nella directory `refs`, questo sarà probabilmente sarà nel file `packed-refs`.
 
-Notice the last line of the file, which begins with a `^`. This means the tag directly above is an annotated tag and that line is the commit that the annotated tag points to.
+Nota l’ultima riga del file, quella che inizia con un `^`. Questo indica che il tag immediatamente precedente è un tag annotato e che quella linea è la commit a cui punta il tag annotato.
 
-### Data Recovery ###
+### Recupero dei dati ###
 
-At some point in your Git journey, you may accidentally lose a commit. Generally, this happens because you force-delete a branch that had work on it, and it turns out you wanted the branch after all; or you hard-reset a branch, thus abandoning commits that you wanted something from. Assuming this happens, how can you get your commits back?
+Durante il tuo lavoro quotidiano può capitare che, accidentalmente, perda una commit. Questo generalmente succede quando forzi la cancellazione di un branch su cui hai lavorato e poi scopri di averne bisogno, o quando fai un hard-reset di un branch, abbandonando quindi delle commit da cui poi vorrai qualcosa. Ipotizzando che sia successo proprio questo: come fai a ripristinare le commit perse?
 
-Here’s an example that hard-resets the master branch in your test repository to an older commit and then recovers the lost commits. First, let’s review where your repository is at this point:
+Qui c’è un esempio di un hard-resets del master nel tuo repository di test su una vecchia commit e recuperare poi le commit perse. Prima di tutto verifica lo stato del tuo repository:
 
 	$ git log --pretty=oneline
-	ab1afef80fac8e34258ff41fc1b867c702daa24b modified repo a bit
-	484a59275031909e19aadb7c92262719cfcdf19a added repo.rb
-	1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
-	cac0cab538b970a37ea1e769cbbde608743bc96d second commit
-	fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+	ab1afef80fac8e34258ff41fc1b867c702daa24b modificato un poco il repository
+	484a59275031909e19aadb7c92262719cfcdf19a aggiunto repo.rb
+	1a410efbd13591db07496601ebc7a059dd55cfe9 terza commit
+	cac0cab538b970a37ea1e769cbbde608743bc96d seconda commit
+	fdf4fc3344e67ab068f836878b6c4951e3b15f3d prima commit
 
-Now, move the `master` branch back to the middle commit:
+Muovi ora il branch `master` a una commit centrale:
 
 	$ git reset --hard 1a410efbd13591db07496601ebc7a059dd55cfe9
-	HEAD is now at 1a410ef third commit
+	HEAD is now at 1a410ef terza commit
 	$ git log --pretty=oneline
-	1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
-	cac0cab538b970a37ea1e769cbbde608743bc96d second commit
-	fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+	1a410efbd13591db07496601ebc7a059dd55cfe9 terza commit
+	cac0cab538b970a37ea1e769cbbde608743bc96d seconda commit
+	fdf4fc3344e67ab068f836878b6c4951e3b15f3d prima commit
 
-You’ve effectively lost the top two commits — you have no branch from which those commits are reachable. You need to find the latest commit SHA and then add a branch that points to it. The trick is finding that latest commit SHA — it’s not like you’ve memorized it, right?
+Così facendo hai perso le due commit più recenti: questa commit non sono più raggiungibili in nessun modo. Devi scoprire l’hash SHA dell’ultima commit e aggiungere quindi un branch che vi punti. Il trucco è trovare l’hash SHA dell’ultima commit: non è come lo ricordavi, vero?
 
-Often, the quickest way is to use a tool called `git reflog`. As you’re working, Git silently records what your HEAD is every time you change it. Each time you commit or change branches, the reflog is updated. The reflog is also updated by the `git update-ref` command, which is another reason to use it instead of just writing the SHA value to your ref files, as we covered in the "Git References" section of this chapter earlier.  You can see where you’ve been at any time by running `git reflog`:
+Spesso il modo più veloce è usare `git reflog`. Mentre lavori Git memorizza silenziosamente lo stato del tuo HEAD ogni volta che lo cambi. IL reflag viene aggiornato ogni volta che fai una commit o cambi un branch. Il reflog viene aggiornato anche dal comando `git update-ref`, che è un’altra buona ragione per usarlo, invece di scrivere direttamente il valore dell’SHA nei tuoi file ref, come abbiamo visto nella sezione “I Riferimenti di Git" in questo stesso capitolo. Eseguendo `git reflog` puoi vedere dov’eri in qualsiasi dato momento:
 
 	$ git reflog
 	1a410ef HEAD@{0}: 1a410efbd13591db07496601ebc7a059dd55cfe9: updating HEAD
 	ab1afef HEAD@{1}: ab1afef80fac8e34258ff41fc1b867c702daa24b: updating HEAD
 
-Here we can see the two commits that we have had checked out, however there is not much information here.  To see the same information in a much more useful way, we can run `git log -g`, which will give you a normal log output for your reflog.
+Qui vediamo le due commit di cui abbiamo fatto il checkout, ma qui non ci sono poi tante informazioni. Per vedere le stesse informazioni, ma in una maniera più utile, possiamo eseguire il comando `git log -g`, che restituisce un output normale del tuo reflog.
 
 	$ git log -g
 	commit 1a410efbd13591db07496601ebc7a059dd55cfe9
@@ -852,7 +852,7 @@ Here we can see the two commits that we have had checked out, however there is n
 	Author: Scott Chacon <schacon@gmail.com>
 	Date:   Fri May 22 18:22:37 2009 -0700
 
-	    third commit
+	    terza commit
 
 	commit ab1afef80fac8e34258ff41fc1b867c702daa24b
 	Reflog: HEAD@{1} (Scott Chacon <schacon@gmail.com>)
@@ -860,25 +860,25 @@ Here we can see the two commits that we have had checked out, however there is n
 	Author: Scott Chacon <schacon@gmail.com>
 	Date:   Fri May 22 18:15:24 2009 -0700
 
-	     modified repo a bit
+	     modificato un poco il repository
 
 It looks like the bottom commit is the one you lost, so you can recover it by creating a new branch at that commit. For example, you can start a branch named `recover-branch` at that commit (ab1afef):
 
 	$ git branch recover-branch ab1afef
 	$ git log --pretty=oneline recover-branch
-	ab1afef80fac8e34258ff41fc1b867c702daa24b modified repo a bit
-	484a59275031909e19aadb7c92262719cfcdf19a added repo.rb
-	1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
-	cac0cab538b970a37ea1e769cbbde608743bc96d second commit
-	fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+	ab1afef80fac8e34258ff41fc1b867c702daa24b modificato un poco il repository
+	484a59275031909e19aadb7c92262719cfcdf19a aggiunto repo.rb
+	1a410efbd13591db07496601ebc7a059dd55cfe9 terza commit
+	cac0cab538b970a37ea1e769cbbde608743bc96d seconda commit
+	fdf4fc3344e67ab068f836878b6c4951e3b15f3d prima commit
 
-Cool — now you have a branch named `recover-branch` that is where your `master` branch used to be, making the first two commits reachable again.
-Next, suppose your loss was for some reason not in the reflog — you can simulate that by removing `recover-branch` and deleting the reflog. Now the first two commits aren’t reachable by anything:
+Bello: ora sembra che tu abbia un branch chiamato `recover-branch` dov’era il tuo branch `master` precedentemente, rendendo nuovamente raggiungibili le due commit.
+Immagina che le commit perse, per qualche ragione, non appaiano nel reflog: puoi simularlo cancellando il branch `recover-branch` e il reflog. Ora le due commit non sono più raggiungibili da niente:
 
 	$ git branch -D recover-branch
 	$ rm -Rf .git/logs/
 
-Because the reflog data is kept in the `.git/logs/` directory, you effectively have no reflog. How can you recover that commit at this point? One way is to use the `git fsck` utility, which checks your database for integrity. If you run it with the `--full` option, it shows you all objects that aren’t pointed to by another object:
+Poiché i dati del reflog è conservato nella directory `.git/logs/`, ora effettivamente non hai nessun reflog. A questo punto come possiamo recuperare la commit? Uno dei modi è usare l’utility `git fsck`, che verifica l’integrità del database del tuo repository. Se lo esegui con l’opzione `--full` ti mostrerà tutti gli oggetti che non sono collegati a nessun altro oggetto:
 
 	$ git fsck --full
 	dangling blob d670460b4b4aece5915caf5c68d12f560a9fe3e4
@@ -886,17 +886,17 @@ Because the reflog data is kept in the `.git/logs/` directory, you effectively h
 	dangling tree aea790b9a58f6cf6f2804eeac9f0abbe9631e4c9
 	dangling blob 7108f7ecb345ee9d0084193f147cdad4d2998293
 
-In this case, you can see your missing commit after the dangling commit. You can recover it the same way, by adding a branch that points to that SHA.
+In questo caso rivediamo la commit scomparsa dopo la *dangling commit* e la puoi recuperare creando un branch che punti  al suo SHA.
 
-### Removing Objects ###
+### Eliminare oggetti ###
 
-There are a lot of great things about Git, but one feature that can cause issues is the fact that a `git clone` downloads the entire history of the project, including every version of every file. This is fine if the whole thing is source code, because Git is highly optimized to compress that data efficiently. However, if someone at any point in the history of your project added a single huge file, every clone for all time will be forced to download that large file, even if it was removed from the project in the very next commit. Because it’s reachable from the history, it will always be there.
+Ci sono un sacco di grandi cose in Git, ma una delle caratteristiche che può creare qualche problemi è che la `git clone` scarica l’intera storia di un progetto, inclusa ciascuna versione di ciascun file. Questo va bene se sono tutti sorgenti perché Git è super ottimizzato per comprimere questi dati in modo molto efficiente. Se però qualcuno in qualche momento ha aggiunto un file molto grande, ogni clone scaricherà quel file grande, anche se poi quel file è stato cancellato da una commit successiva. Poiché è raggiungibile nella cronologia, resterà sempre lì.
 
-This can be a huge problem when you’re converting Subversion or Perforce repositories into Git. Because you don’t download the whole history in those systems, this type of addition carries few consequences. If you did an import from another system or otherwise find that your repository is much larger than it should be, here is how you can find and remove large objects.
+Questo è un grosso problema se stai convertendo a Git dei repository da Subversion o Perforce, perché in quei sistemi questo tipo di aggiunte non crea dei grandi problemi, perché non scarichi l’intera cronologia. Se hai importato i sorgenti da un altro sistema o ti rendi conto che il tuo repository è molto più grande di quello che dovrebbe, di seguito scoprirai come eliminare gli oggetti di grandi dimensioni.
 
-Be warned: this technique is destructive to your commit history. It rewrites every commit object downstream from the earliest tree you have to modify to remove a large file reference. If you do this immediately after an import, before anyone has started to base work on the commit, you’re fine — otherwise, you have to notify all contributors that they must rebase their work onto your new commits.
+Fai attenzione: questa tecnica è distruttiva per la cronologia delle tue commit. Riscrive tutte le commit a partire dal primo albero che devi modificare per rimuovere il riferimento a quel file. Se lo fai subito dopo una importazione, prima che chiunque altro inizi a lavorarci, non c’è nessun problema, altrimenti dovrai avvisare tutti i collaboratori perché ribasino il loro lavoro sulle nuove commit.
 
-To demonstrate, you’ll add a large file into your test repository, remove it in the next commit, find it, and remove it permanently from the repository. First, add a large object to your history:
+Come dimostrazioni aggiungerai un file grande nel tuo repository di test, lo rimuoverai con la commit successiva, lo cercherai e lo rimuoverai permanentemente dal repository. Prima di tutto aggiungi un file grande alla cronologia del tuo repository:
 
 	$ curl http://kernel.org/pub/software/scm/git/git-1.6.3.1.tar.bz2 > git.tbz2
 	$ git add git.tbz2
@@ -905,7 +905,7 @@ To demonstrate, you’ll add a large file into your test repository, remove it i
 	 1 files changed, 0 insertions(+), 0 deletions(-)
 	 create mode 100644 git.tbz2
 
-Oops — you didn’t want to add a huge tarball to your project. Better get rid of it:
+Oops: non volevi aggiungere questo archivio così grande al tuo progetto. Meglio rimediare:
 
 	$ git rm git.tbz2
 	rm 'git.tbz2'
@@ -914,7 +914,7 @@ Oops — you didn’t want to add a huge tarball to your project. Better get rid
 	 1 files changed, 0 insertions(+), 0 deletions(-)
 	 delete mode 100644 git.tbz2
 
-Now, `gc` your database and see how much space you’re using:
+Esegui ora `gc` sul tuo database e guarda quanto spazio stai usando:
 
 	$ git gc
 	Counting objects: 21, done.
@@ -923,7 +923,7 @@ Now, `gc` your database and see how much space you’re using:
 	Writing objects: 100% (21/21), done.
 	Total 21 (delta 3), reused 15 (delta 1)
 
-You can run the `count-objects` command to quickly see how much space you’re using:
+Puoi eseguire anche il comando `count-objects` per vedere lo spazio che stai usando:
 
 	$ git count-objects -v
 	count: 4
@@ -934,27 +934,27 @@ You can run the `count-objects` command to quickly see how much space you’re u
 	prune-packable: 0
 	garbage: 0
 
-The `size-pack` entry is the size of your packfiles in kilobytes, so you’re using 2MB. Before the last commit, you were using closer to 2K — clearly, removing the file from the previous commit didn’t remove it from your history. Every time anyone clones this repository, they will have to clone all 2MB just to get this tiny project, because you accidentally added a big file. Let’s get rid of it.
+Il valore di `size-pack` è la dimensione del packfiles in kilobytes e quindi stai usando 2MB mentre prima dell’ultima commit usavi circa 2K. Cancellando il file dell’ultima commit ovviamente non lo elimina dalla cronologia e ogni volta che qualcuno colmerà il repository, dovrà scaricare tutti i 2MB avere questo progettino, solamente perché hai aggiunto per errore questo file grande. Vediamo di risolverlo.
 
-First you have to find it. In this case, you already know what file it is. But suppose you didn’t; how would you identify what file or files were taking up so much space? If you run `git gc`, all the objects are in a packfile; you can identify the big objects by running another plumbing command called `git verify-pack` and sorting on the third field in the output, which is file size. You can also pipe it through the `tail` command because you’re only interested in the last few largest files:
+Prima di tutto devi trovare il file. In questo caso già sappiamo quale sia, ma supponiamo di non saperlo: come possiamo trovare quale file o quali file occupano tanto spazio? Se esegui `git gc` tutti gli oggetti saranno in un pacchetto e puoi trovare gli oggetti più grandi eseguendo un altro comando *plumbing*, `git verify-pack`, e ordinarli in base al terzo campo dell’output, che indica la dimensione. Puoi anche concatenarlo in *pipe* con `tail` perché siamo interessati solo agli file più grandi:
 
 	$ git verify-pack -v .git/objects/pack/pack-3f8c0...bb.idx | sort -k 3 -n | tail -3
 	e3f094f522629ae358806b17daf78246c27c007b blob   1486 734 4667
 	05408d195263d853f09dca71d55116663690c27c blob   12908 3478 1189
 	7a9eb2fba2b1811321254ac360970fc169ba2330 blob   2056716 2056872 5401
 
-The big object is at the bottom: 2MB. To find out what file it is, you’ll use the `rev-list` command, which you used briefly in Chapter 7. If you pass `--objects` to `rev-list`, it lists all the commit SHAs and also the blob SHAs with the file paths associated with them. You can use this to find your blob’s name:
+L’oggetto grande è alla fine della lista: 2MB. Per scoprire di quale file si tratti useremo il comando `rev-list` che abbiamo già visto rapidamente nel Capitolo 7. Se usi l’opzione `--objects` a `rev-list`, elencherà tutti gli hash SHAs delle commit e dei blob SHAs che facciano riferimento al percorso del file. Puoi trovare il nome del blog così:
 
 	$ git rev-list --objects --all | grep 7a9eb2fb
 	7a9eb2fba2b1811321254ac360970fc169ba2330 git.tbz2
 
-Now, you need to remove this file from all trees in your past. You can easily see what commits modified this file:
+Ora dobbiamo rimuovere questo file da tutti gli alberi della cronologia. Puoi vedere facilmente quali commit hanno modificato questo file:
 
 	$ git log --pretty=oneline --branches -- git.tbz2
 	da3f30d019005479c99eb4c3406225613985a1db oops - removed large tarball
 	6df764092f3e7c8f5f94cbe08ee5cf42e92a0289 added git tarball
 
-You must rewrite all the commits downstream from `6df76` to fully remove this file from your Git history. To do so, you use `filter-branch`, which you used in Chapter 6:
+Ora, per rimuovere completamente questo file dalla cronologia di Git, devi riscrivere tutte le commit successive la `6df76` e per farlo useremo `filter-branch`, che hai già usato nel Capitolo 6:
 
 	$ git filter-branch --index-filter \
 	   'git rm --cached --ignore-unmatch git.tbz2' -- 6df7640^..
@@ -962,9 +962,9 @@ You must rewrite all the commits downstream from `6df76` to fully remove this fi
 	Rewrite da3f30d019005479c99eb4c3406225613985a1db (2/2)
 	Ref 'refs/heads/master' was rewritten
 
-The `--index-filter` option is similar to the `--tree-filter` option used in Chapter 6, except that instead of passing a command that modifies files checked out on disk, you’re modifying your staging area or index each time. Rather than remove a specific file with something like `rm file`, you have to remove it with `git rm --cached` — you must remove it from the index, not from disk. The reason to do it this way is speed — because Git doesn’t have to check out each revision to disk before running your filter, the process can be much, much faster. You can accomplish the same task with `--tree-filter` if you want. The `--ignore-unmatch` option to `git rm` tells it not to error out if the pattern you’re trying to remove isn’t there. Finally, you ask `filter-branch` to rewrite your history only from the `6df7640` commit up, because you know that is where this problem started. Otherwise, it will start from the beginning and will unnecessarily take longer.
+L’opzione `--index-filter` è simile alla `--tree-filter` usata nel Capitolo 6, ad eccezione del fatto che invece di passare un comando che modifichi i file sul disco, modifichi la tua area di staging o l’indice ad ogni iterazione. Piuttosto che rimuovere un file con qualcosa simile a `rm file` dovrai rimuoverlo con `git rm --cached`, perché devi rimuoverlo dall’indice e non dal disco. Il motivo per farlo in questo modo è che è più veloce, perché Git non deve fare il checkout di ciascuna versione prima di eseguire il tuo filtro, e quindi tutto il processo è molto più veloce. Se preferisci, puoi ottenere lo stesso risultato con `--tree-filter`. L’opzione `--ignore-unmatch` di `git rm` serve a far si che non venga generato un errore se il file che stai cercando di eliminare non c’è in quella versione. Puoi, infine chiedere a `filter-branch` di riscrivere la cronologia solo a partire dalla commit `6df7640`, perché già sappiamo che è lì che ha avuto inizio il problema. Altrimenti inizierebbe dall’inizio e sarebbe inutilmente più lento.
 
-Your history no longer contains a reference to that file. However, your reflog and a new set of refs that Git added when you did the `filter-branch` under `.git/refs/original` still do, so you have to remove them and then repack the database. You need to get rid of anything that has a pointer to those old commits before you repack:
+La tua cronologia ora non ha più alcun riferimento a quel file, ma lo fanno il tuo reflog e un nuovo gruppo di riferimenti che Git ha aggiunto quando hai eseguito `filter-branch` in `.git/refs/original`, e quindi devi rimuovere anche questi e ricomprimere il database. Ma devi correggere qualsiasi cosa che ancora punti a quelle vecchie commit, prima di ricompattare il repository:
 
 	$ rm -Rf .git/refs/original
 	$ rm -Rf .git/logs/
@@ -975,7 +975,7 @@ Your history no longer contains a reference to that file. However, your reflog a
 	Writing objects: 100% (19/19), done.
 	Total 19 (delta 3), reused 16 (delta 1)
 
-Let’s see how much space you saved.
+Vediamo ora quanto spazio hai recuperato.
 
 	$ git count-objects -v
 	count: 8
@@ -986,7 +986,7 @@ Let’s see how much space you saved.
 	prune-packable: 0
 	garbage: 0
 
-The packed repository size is down to 7K, which is much better than 2MB. You can see from the size value that the big object is still in your loose objects, so it’s not gone; but it won’t be transferred on a push or subsequent clone, which is what is important. If you really wanted to, you could remove the object completely by running `git prune --expire`.
+Le dimensioni del repository compresso sono ora di 7K, che è molto meglio dei 2MB precedenti. Dalle dimensioni puoi vedere che l’oggetto è ancora presente tra gli oggetti sciolti, quindi non è ancora sparito, ma non verrà più trasferito quando farai una push o se qualcun altro farà un clone, che è la cosa più importante. Se vuoi comunque eliminare definitivamente l’oggetto potrai farlo eseguendo il comando `git prune --expire`.
 
 ## Sommario ##
 
