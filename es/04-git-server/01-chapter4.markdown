@@ -361,9 +361,9 @@ En este punto, es posible que desees cambiar a un popular programa llamado Gitos
 
 Instalar Gitosis no es precisamente sencillo. Pero tampoco demasiado complicado. Es más sencillo hacerlo si utilizas un servidor Linux --estos ejemplos se han hecho sobre un servidor Ubuntu 8.10--.
 
-Gitosis necesita de ciertas herramientas Python, por lo que la  primera tarea será instalar el paquete de herramientas Pyton. En Ubuntu viene como el paquete python-stuptools:
+Gitosis necesita de ciertas herramientas Python, por lo que la  primera tarea será instalar el paquete de herramientas Pyton. En Ubuntu viene como el paquete python-setuptools:
 
-	$ apt-get install python-setuptools
+	$ sudo apt-get install python-setuptools
 
 A continuación, has de clonar e instalar Gitosis desde el repositorio principal de su proyecto:
 
@@ -404,9 +404,8 @@ Y ya estás preparado para trabajar. Si lo has configurado todo correctamente, p
 	fatal: unrecognized command 'gitosis-serve schacon@quaternion'
 	  Connection to gitserver closed.
 
-Indicandote que Gitosis te ha reconocido, pero te está hechando debido a que no estás intentando lanzar ningún comando Git. Por tanto, intentalo con un comando Git real --por ejemplo, clonar el propio repositorio de control de Gitosis 
-
-	a tu ordenador personal-- 
+Indicandote que Gitosis te ha reconocido, pero te está hechando debido a que no estás intentando lanzar ningún comando Git. Por tanto, intentalo con un comando Git real --por ejemplo, clonar el propio repositorio de control de Gitosis a tu ordenador personal-- 
+	
 	$ git clone git@gitserver:gitosis-admin.git
 
 Con ello, tendrás una carpeta denominada 'gitosis-admin', con dos partes principales dentro de ella:
