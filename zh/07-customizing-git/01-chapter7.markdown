@@ -19,7 +19,7 @@
 
 ### 客户端基本配置 ###
 
-Git 能够识别的配置项被分为了两大类：客户端和服务器端，其中大部分基于你个人工作偏好，属于客户端配置。尽管有数不尽的选项，但我只阐述 其中经常使用或者会对你的工作流产生巨大影响的选项，如果你想观察你当前的 Git 能识别的选项列表，请运行 
+Git 能够识别的配置项被分为了两大类：客户端和服务器端，其中大部分基于你个人工作偏好，属于客户端配置。尽管有数不尽的选项，但我只阐述 其中经常使用或者会对你的工作流产生巨大影响的选项，如果你想观察你当前的 Git 能识别的选项列表，请运行
 
 	$ git config --help
 
@@ -128,7 +128,7 @@ Git会按照你需要自动为大部分的输出加上颜色，你能明确地�
 
 除此之外，以上每个选项都有子选项，可以被用来覆盖其父设置，以达到为输出的各个部分着色的目的。例如，让diff输出的改变信息以粗体、蓝色前景和黑色背景的形式显示：
 
-	$ git config --global color.diff.meta “blue black bold”
+	$ git config --global color.diff.meta "blue black bold"
 
 你能设置的颜色值如：normal、black、red、green、yellow、blue、magenta、cyan、white，正如以上例子设置的粗体属性，想要设置字体属性的话，可以选择如：bold、dim、ul、blink、reverse。
 
@@ -214,7 +214,7 @@ Git预先设置了许多其他的合并和解决冲突的工具，而你不必�
 
 #### core.autocrlf ####
 
-假如你正在Windows上写程序，又或者你正在和其他人合作，他们在Windows上编程，而你却在其他系统上，在这些情况下，你可能会遇到行尾结束符问题。这是因为Windows使用回车和换行两个字符来结束一行，而Mac和Linux只使用换行一个字符。虽然这是小问题，但它会极大地扰乱跨平台协作。 
+假如你正在Windows上写程序，又或者你正在和其他人合作，他们在Windows上编程，而你却在其他系统上，在这些情况下，你可能会遇到行尾结束符问题。这是因为Windows使用回车和换行两个字符来结束一行，而Mac和Linux只使用换行一个字符。虽然这是小问题，但它会极大地扰乱跨平台协作。
 
 Git可以在你提交时自动地把行结束符CRLF转换成LF，而在签出代码时把LF转换成CRLF。用`core.autocrlf`来打开此项功能，如果是在Windows系统上，把它设置成`true`，这样当签出代码时，LF会被转换成CRLF：
 
@@ -301,17 +301,17 @@ Git默认情况下不会在推送期间检查所有对象的一致性。虽然�
 
 	*.pbxproj -crlf -diff
 
-现在，Git 会尝试转换和修正CRLF（回车换行）问题，也不会当你在项目中运行git show或git diff时，比较不同的内容。在Git 1.6及之后的版本中，可以用一个宏代替`-crlf -diff`：
+现在，Git 会尝试转换和修正CRLF（回车换行）问题，也不会当你在项目中运行`git show`或`git diff`时，比较不同的内容。在Git 1.6及之后的版本中，可以用一个宏代替`-crlf -diff`：
 
 	*.pbxproj binary
 
 #### 比较二进制文件 ####
 
-在 Git 中，你能利用 Git 属性来有效地比较二进制文件。可以设置 Git 把二进制数据转换成文本格式，用通常的diff来比较。
+你可以使用 Git 属性来有效地比较两个二进制文件（binary files，译注：指非文本文件）。那么第一步要做的是，告诉 Git 怎么把你的二进制文件转化为纯文本格式，从而让普通的 diff 命令可以进行文本对比。但是，我们怎么把*二进制文件*转化为文本呢？最好的解决方法是找到一个转换工具帮助我们进行转化。但是，大部分的二进制文件不能表示为可读的文本，例如语音文件就很难转化为文本文件。如果你遇到这些情况，比较简单的解决方法是从这些二进制文件中获取元数据。虽然这些元数据并不能完全描述一个二进制文件，但大多数情况下，都是能够概括文件情况的。
 
-We'll make use of the both described approaches to get usable diffs for some widely used binary formats.
+下面，我们将会展示，如何使用转化工具进行二进制文件的比较。
 
-Side note: There are different kinds of binary formats with a text content, which are hard to find usable converter for. In such a case you could try to extract a text from your file with the `strings` program. Some of these files may use an UTF-16 encoding or other "codepages" and `strings` won’t find anything useful in there. Your mileage may vary. However, `strings` is available on most Mac and Linux systems, so it may be a good first try to do this with many binary formats.
+边注：有一些二进制文件虽然包含文字，但是却难以转换。（译注：例如 Word 文档。）在这些情况，你可以尝试使用 `strings` 工具来获取其中的文字。但如果当这些文档包含 UTF-16 编码，或者其他代码页（codepages），`strings` 也可能无补于事。`strings` 在大部分的 Mac 和 Linux 下都有安装。当遇到有二进制文件需要转换的时候，你可以试试这个工具。
 
 ##### MS Word files #####
 
@@ -330,7 +330,7 @@ Side note: There are different kinds of binary formats with a text content, whic
 
 	$ git config diff.word.textconv catdoc
 
-This command adds a section to your `.git/config` that looks like this:
+这个命令会在你的 `.git/config` 文件中增加一节：
 
 	[diff "word"]
 		textconv = catdoc
@@ -454,10 +454,10 @@ Now `git diff` will be able to tell you what changed in `.odt` files.
 因此，你能写自己的过滤器，在提交文件到暂存区或签出文件时替换关键字。有2种过滤器，"clean"和"smudge"。在 `.gitattributes`文件中，你能对特定的路径设置一个过滤器，然后设置处理文件的脚本，这些脚本会在文件签出前（"smudge"，见图 7-2）和提交到暂存区前（"clean"，见图7-3）被调用。这些过滤器能够做各种有趣的事。
 
 Insert 18333fig0702.png
-图7-2. 签出时，“smudge”过滤器被触发。
+图7-2. 签出时，"smudge"过滤器被触发。
 
 Insert 18333fig0703.png
-图7-3. 提交到暂存区时，“clean”过滤器被触发。
+图7-3. 提交到暂存区时，"clean"过滤器被触发。
 
 这里举一个简单的例子：在暂存前，用`indent`（缩进）程序过滤所有C源代码。在`.gitattributes`文件中设置"indent"过滤器过滤`*.c`文件：
 
@@ -736,7 +736,7 @@ update 脚本和 `pre-receive` 脚本十分类似。不同之处在于它会为�
 	      access[$user].each do |access_path|
 	        if !access_path || # 用户拥有完全访问权限
 	          (path.index(access_path) == 0) # 或者对此位置有访问权限
-	          has_file_access = true 
+	          has_file_access = true
 	        end
 	      end
 	      if !has_file_access
@@ -924,7 +924,7 @@ update 脚本和 `pre-receive` 脚本十分类似。不同之处在于它会为�
 	  end
 	end
 
-这个脚本利用了一个第六章“修订版本选择”一节中不曾提到的语法。通过这一句可以获得一个所有已经完成推送的提交的列表：
+这个脚本利用了一个第六章"修订版本选择"一节中不曾提到的语法。通过这一句可以获得一个所有已经完成推送的提交的列表：
 
 	git rev-list ^#{sha}^@ refs/remotes/#{remote_ref}
 
