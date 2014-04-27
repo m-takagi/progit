@@ -82,13 +82,13 @@ One of the things Git does in the background while you’re working away is keep
 You can see your reflog by using `git reflog`:
 
 	$ git reflog
-	734713b... HEAD@{0}: commit: fixed refs handling, added gc auto, updated
-	d921970... HEAD@{1}: merge phedders/rdocs: Merge made by recursive.
-	1c002dd... HEAD@{2}: commit: added some blame and merge stuff
-	1c36188... HEAD@{3}: rebase -i (squash): updating HEAD
-	95df984... HEAD@{4}: commit: # This is a combination of two commits.
-	1c36188... HEAD@{5}: rebase -i (squash): updating HEAD
-	7e05da5... HEAD@{6}: rebase -i (pick): updating HEAD
+	734713b HEAD@{0}: commit: fixed refs handling, added gc auto, updated
+	d921970 HEAD@{1}: merge phedders/rdocs: Merge made by recursive.
+	1c002dd HEAD@{2}: commit: added some blame and merge stuff
+	1c36188 HEAD@{3}: rebase -i (squash): updating HEAD
+	95df984 HEAD@{4}: commit: # This is a combination of two commits.
+	1c36188 HEAD@{5}: rebase -i (squash): updating HEAD
+	7e05da5 HEAD@{6}: rebase -i (pick): updating HEAD
 
 Every time your branch tip is updated for any reason, Git stores that information for you in this temporary history. And you can specify older commits with this data, as well. If you want to see the fifth prior value of the HEAD of your repository, you can use the `@{n}` reference that you see in the reflog output:
 
@@ -446,8 +446,8 @@ At this point, you can easily switch branches and do work elsewhere; your change
 
 	$ git stash list
 	stash@{0}: WIP on master: 049d078 added the index file
-	stash@{1}: WIP on master: c264051... Revert "added file_size"
-	stash@{2}: WIP on master: 21d80a5... added number to log
+	stash@{1}: WIP on master: c264051 Revert "added file_size"
+	stash@{2}: WIP on master: 21d80a5 added number to log
 
 In this case, two stashes were done previously, so you have access to three different stashed works. You can reapply the one you just stashed by using the command shown in the help output of the original stash command: `git stash apply`. If you want to apply one of the older stashes, you can specify it by naming it, like this: `git stash apply stash@{2}`. If you don’t specify a stash, Git assumes the most recent stash and tries to apply it:
 
@@ -481,8 +481,8 @@ The apply option only tries to apply the stashed work — you continue to have i
 
 	$ git stash list
 	stash@{0}: WIP on master: 049d078 added the index file
-	stash@{1}: WIP on master: c264051... Revert "added file_size"
-	stash@{2}: WIP on master: 21d80a5... added number to log
+	stash@{1}: WIP on master: c264051 Revert "added file_size"
+	stash@{2}: WIP on master: 21d80a5 added number to log
 	$ git stash drop stash@{0}
 	Dropped stash@{0} (364e91f3f268f0900bc3ee613f9f733e82aaed43)
 
