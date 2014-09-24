@@ -137,14 +137,14 @@ Anda bekerja di jejaring *website* dan melakukan beberapa *commits*. Dengan mela
 Insert 18333fig0312.png 
 Gambar 3-12. Cabang iss53 telah bergerak kedepan sesuai pekerjaan anda.
 
-Now you get the call that there is an issue with the web site, and you need to fix it immediately. With Git, you don’t have to deploy your fix along with the `iss53` changes you’ve made, and you don’t have to put a lot of effort into reverting those changes before you can work on applying your fix to what is in production. All you have to do is switch back to your master branch.
+Lalu kemudian, saat kita melihat ada permasalahan dalam situs jejaring, dan kita perlu untuk memperbaikinya segera. Dengan Git, anda tidak perlu memasang pembetulannya bersama dengan perubahan di `iss53`, dan anda tidak perlu melakukan cara yang sulit untuk kembali ke pekerjaan anda sebelumnya di tahap produksi. Yang anda perlukan hanya kembali ke pencabangan *master*.
 
-However, before you do that, note that if your working directory or staging area has uncommitted changes that conflict with the branch you’re checking out, Git won’t let you switch branches. It’s best to have a clean working state when you switch branches. There are ways to get around this (namely, stashing and commit amending) that we’ll cover later. For now, you’ve committed all your changes, so you can switch back to your master branch:
+Bagaimanapun, sebelum anda melakukannya, perhatikan bahwa jika dalam kandar kerja anda atau kondisi *staging* memiliki perubahan yang bertentangan dengan pencabangan yang akan anda tinggalkan, Git tidak akan memperbolehkan anda berpindah. Ini adalah cara terbaik untuk meninggalkan pekerjaan dalam keadaan bersih ketika anda akan berpindah pencabangan. Ada beberapa cara untuk melakukan ini (*namely*, *stashing*, dan merubah *commit*) yang akan kita bahas berikutnya. Untuk saat ini, anda telah *commit* seluruh perubahan, sehingga anda dapat kembali ke pencabangan *master*:
 
 	$ git checkout master
 	Switched to branch "master"
 
-At this point, your project working directory is exactly the way it was before you started working on issue #53, and you can concentrate on your hotfix. This is an important point to remember: Git resets your working directory to look like the snapshot of the commit that the branch you check out points to. It adds, removes, and modifies files automatically to make sure your working copy is what the branch looked like on your last commit to it.
+Saat ini, anda berada dalam kandar kerja dalam kondisi tepat seperti anda belum mengerjakan masalah #53, dan anda dapat konsentrasi mengerjakan perbaikannya. Hal yang perlu diingat adalah: Git mengkondisikan kandar kerja anda agar terlihat sebagaimana anda kembali ke titik pencabangan yang anda tuju. Git menambahkan, menghapus, dan mengubah berkas secara otomatis untuk memastikan bahwa anda bekerja pada pencabangan terakhir yang anda *commit*.
 
 Next, you have a hotfix to make. Let’s create a hotfix branch on which to work until it’s completed (see Figure 3-13):
 
